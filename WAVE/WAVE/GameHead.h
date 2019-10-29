@@ -64,6 +64,7 @@ struct UserData
 #include "ObjTitle.h"
 #include "ObjMain.h"
 #include "ObjClear.h"
+#include "HeroHP.h"
 //#include "CObjHomingBullet.h"
 //------------------------------------------------
 

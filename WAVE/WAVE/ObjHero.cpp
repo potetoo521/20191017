@@ -9,6 +9,42 @@
 
 //使用するネームスペース
 using namespace GameL;
+ 
+	//位置情報X変更用
+	void CObjHero::SetX(float x)
+	{
+
+
+		m_px = x;
+
+
+
+	}
+	//位置情報Y変更用
+	void CObjHero::SetY(float y)
+	{
+
+
+		m_py = y;
+
+
+	}
+
+	//位置情報X取得用
+	float CObjHero::GetX()
+	{
+
+		return m_px;
+
+
+	}
+	//位置情報Y取得用
+	float CObjHero::GetY()
+	{
+
+		return m_py;
+
+	}
 
 //イニシャライズ
 void CObjHero::Init()
@@ -28,7 +64,7 @@ void CObjHero::Init()
 	m_ani_max_time = 2;    //アニメーション間隔幅
 
 
-	m_hp = 3;//主人公HP
+	m_hp = 10;//主人公HP
 
 
 	//当たり判定用のHitBoxを作成
@@ -64,8 +100,6 @@ void CObjHero::Action()
 	}
 
 
-
-	
 
 	//Xキー入力でジャンプ
 	if (Input::GetVKey('W')==true)
@@ -142,17 +176,37 @@ void CObjHero::Action()
 	m_py += m_vy;
 
 
-	
-
-
 	//主人公が敵と接触したとき主人公のHｐが減る
 	if (hit->CheckObjNameHit(OBJ_ENEMY) != nullptr)
 	{
 
-		m_hp -= 1;
+		//主人公が敵とどの角度で当たっているかを確認
+		HIT_DATA**hit_data;
+		hit_data = hit->SearchObjNameHit(OBJ_ENEMY);
 
+
+		//敵の左右に当たったら
+		float r = hit_data[0]->r; 
+		if ((r < 45 && r >= 0) || r > 315)
+		{
+			m_vx = -5.0f;//左に移動させる
+		}
+
+
+		if (r > 135 && r < 225)
+		{
+
+			m_vx = +5.0f;//右に移動させる
+
+
+		}
+
+		m_hp -= 1;//HPがここで減る
 
 	}
+
+
+
 	//HPが0になったら破棄
 	if (m_hp <= 0)
 	{
@@ -161,9 +215,6 @@ void CObjHero::Action()
 		Hits::DeleteHitBox(this);
 
 	}
-
-
-
 
 
 	//主人公の位置X(x_px)+主人公の幅分が+X軸方向に領域外を認識

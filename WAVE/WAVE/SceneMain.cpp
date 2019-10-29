@@ -32,7 +32,7 @@ void CSceneMain::InitScene()
 	Draw::LoadImageW(L"image1.png",1,TEX_SIZE_512);
 
 	//グラフィック読み込み
-	Draw::LoadImageW(L"image1.png", 1, TEX_SIZE_512);
+	Draw::LoadImageW(L"Enemy1.png", 2, TEX_SIZE_512);
 
 
 	//主人公オブジェクト作成
