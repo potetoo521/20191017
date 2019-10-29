@@ -33,4 +33,6 @@ private:
 	//ENEMY‚ÌHP
 	int   m_hp;
 
+	
+
 };

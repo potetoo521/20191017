@@ -5,16 +5,53 @@
 #include "ObjHero.h"
 #include "GameL\HitBoxManager.h"
 
-#define GRAUND (536.0f)
+#define GRAUND (546.0f)
 
 //使用するネームスペース
 using namespace GameL;
+ 
+	//位置情報X変更用
+	void CObjHero::SetX(float x)
+	{
+
+
+		m_px = x;
+
+
+
+	}
+	//位置情報Y変更用
+	void CObjHero::SetY(float y)
+	{
+
+
+		m_py = y;
+
+
+	}
+
+	//位置情報X取得用
+	float CObjHero::GetX()
+	{
+
+		return m_px;
+
+
+	}
+	//位置情報Y取得用
+	float CObjHero::GetY()
+	{
+
+		return m_py;
+
+	}
 
 //イニシャライズ
 void CObjHero::Init()
 {
-	m_px = 5.0f;    //位置
-	m_py = 5.0f;
+
+	m_px = 0.0f;    //位置
+	m_py = 0.0f;
 
 	m_mou_px = 0.0f;//向き
 	m_mou_py = 0.0f;
@@ -34,12 +71,19 @@ void CObjHero::Init()
 	m_speed_power = 0.5f;  //通常速度
 	m_ani_max_time = 2;    //アニメーション間隔幅
 
+	//blockとの衝突状態確認用
+	m_hit_up = false;
+	m_hit_down = false;
+	m_hit_left = false;
+	m_hit_right = false;
 
-	m_hp = 3;//主人公HP
+	m_hp = 10;//主人公HP
 
 
 	//当たり判定用のHitBoxを作成
 	Hits::SetHitBox(this, m_px, m_py, 64, 64, ELEMENT_PLAYER, OBJ_HERO,  1);
+
+	
 }
 
 //アクション
@@ -58,7 +102,7 @@ void CObjHero::Action()
 
 			//弾丸オブジェクト作成             //発射位置を主人公の位置+offset値
 			CObjBullet* obj_b = new CObjBullet(m_px+30.0f, m_py + 30.0f); //弾丸オブジェクト作成
-			Objs::InsertObj(obj_b, OBJ_BULLET, 1);//作った弾丸オブジェクトをオブジェクトマネージャーに登録
+			Objs::InsertObj(obj_b, OBJ_BULLET, 6);//作った弾丸オブジェクトをオブジェクトマネージャーに登録
 
 			m_f = false;
 
@@ -72,10 +116,8 @@ void CObjHero::Action()
 
 
 
-	
-
 	//Xキー入力でジャンプ
-	if (Input::GetVKey('W')==true)
+	if (Input::GetVKey(VK_SPACE)==true)
 	{
 		if (m_py + 64.0f == GRAUND)
 		{
@@ -175,17 +217,37 @@ void CObjHero::Action()
 	m_py += m_vy;
 
 
-	
-
-
 	//主人公が敵と接触したとき主人公のHｐが減る
 	if (hit->CheckObjNameHit(OBJ_ENEMY) != nullptr)
 	{
 
-		m_hp -= 1;
+		//主人公が敵とどの角度で当たっているかを確認
+		HIT_DATA**hit_data;
+		hit_data = hit->SearchObjNameHit(OBJ_ENEMY);
 
+
+		//敵の左右に当たったら
+		float r = hit_data[0]->r; 
+		if ((r < 45 && r >= 0) || r > 315)
+		{
+			m_vx = -5.0f;//左に移動させる
+		}
+
+
+		if (r > 135 && r < 225)
+		{
+
+			m_vx = +5.0f;//右に移動させる
+
+
+		}
+
+		m_hp -= 1;//HPがここで減る
 
 	}
+
+
+
 	//HPが0になったら破棄
 	/*if (m_hp <= 0)
 	{
@@ -193,11 +255,11 @@ void CObjHero::Action()
 		this->SetStatus(false);
 		Hits::DeleteHitBox(this);
 
-	}*/
+		//主人公消滅でシーンをゲームオーバーに移行する
+		Scene::SetScene(new CSceneGameOver());
 
-
-
-
+	}
+	*/
 
 	//主人公の位置X(x_px)+主人公の幅分が+X軸方向に領域外を認識
 	if (m_px + 64.0f > 800.0f)
