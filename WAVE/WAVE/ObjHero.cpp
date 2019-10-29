@@ -5,7 +5,7 @@
 #include "ObjHero.h"
 #include "GameL\HitBoxManager.h"
 
-#define GRAUND (536.0f)
+#define GRAUND (546.0f)
 
 //使用するネームスペース
 using namespace GameL;
@@ -49,8 +49,16 @@ using namespace GameL;
 //イニシャライズ
 void CObjHero::Init()
 {
+
 	m_px = 0.0f;    //位置
 	m_py = 0.0f;
+
+	m_mou_px = 0.0f;//向き
+	m_mou_py = 0.0f;
+
+	m_mou_pr = 0.0f;
+	m_mou_pl = 0.0f;
+
 	m_f = true;   //弾丸制御
 
 	m_vx = 0.0f;    //移動ベクトル
@@ -63,12 +71,19 @@ void CObjHero::Init()
 	m_speed_power = 0.5f;  //通常速度
 	m_ani_max_time = 2;    //アニメーション間隔幅
 
+	//blockとの衝突状態確認用
+	m_hit_up = false;
+	m_hit_down = false;
+	m_hit_left = false;
+	m_hit_right = false;
 
 	m_hp = 10;//主人公HP
 
 
 	//当たり判定用のHitBoxを作成
 	Hits::SetHitBox(this, m_px, m_py, 64, 64, ELEMENT_PLAYER, OBJ_HERO,  1);
+
+	
 }
 
 //アクション
@@ -87,7 +102,7 @@ void CObjHero::Action()
 
 			//弾丸オブジェクト作成             //発射位置を主人公の位置+offset値
 			CObjBullet* obj_b = new CObjBullet(m_px+30.0f, m_py + 30.0f); //弾丸オブジェクト作成
-			Objs::InsertObj(obj_b, OBJ_BULLET, 1);//作った弾丸オブジェクトをオブジェクトマネージャーに登録
+			Objs::InsertObj(obj_b, OBJ_BULLET, 6);//作った弾丸オブジェクトをオブジェクトマネージャーに登録
 
 			m_f = false;
 
@@ -102,7 +117,7 @@ void CObjHero::Action()
 
 
 	//Xキー入力でジャンプ
-	if (Input::GetVKey('W')==true)
+	if (Input::GetVKey(VK_SPACE)==true)
 	{
 		if (m_py + 64.0f == GRAUND)
 		{
@@ -125,18 +140,44 @@ void CObjHero::Action()
 	}
 
 
+
+	//主人公の向きを制御
+	//マウスの位置を取得
+	m_mou_px = (float)Input::GetPosX();
+	m_mou_py = (float)Input::GetPosY();
+	//マウスのボタンの状態
+	m_mou_pr = Input::GetMouButtonR();
+	m_mou_pl = Input::GetMouButtonL();
+
+	
+
+	
+	if (m_px > m_mou_px)
+	{
+
+			m_posture = 0.0f;
+
+	}
+	else
+	{
+			m_posture = 1.0f;
+
+	}
+
+		
+
 	//キーの入力方向
 	if (Input::GetVKey('D')==true)
 	{
 		m_vx += m_speed_power;
-		m_posture = 1.0f;
+		//m_posture = 1.0f;
 		m_ani_time += 1;
 	}
 	//キーの入力方向
 	else if (Input::GetVKey('A') == true)
 	{
 		m_vx -= m_speed_power;
-		m_posture = 0.0f;
+		//m_posture = 0.0f;
 		m_ani_time += 1;
 	}
 	else
@@ -208,14 +249,17 @@ void CObjHero::Action()
 
 
 	//HPが0になったら破棄
-	if (m_hp <= 0)
+	/*if (m_hp <= 0)
 	{
 
 		this->SetStatus(false);
 		Hits::DeleteHitBox(this);
 
-	}
+		//主人公消滅でシーンをゲームオーバーに移行する
+		Scene::SetScene(new CSceneGameOver());
 
+	}
+	*/
 
 	//主人公の位置X(x_px)+主人公の幅分が+X軸方向に領域外を認識
 	if (m_px + 64.0f > 800.0f)

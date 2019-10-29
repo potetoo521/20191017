@@ -6,7 +6,7 @@
 #include "ObjEnemy.h"
 #include "GameL\HitBoxManager.h"
 
-#define GRAUND (536.0f)
+#define GRAUND (546.0f)
 
 //使用するネームスペース
 using namespace GameL;
@@ -157,6 +157,9 @@ void CObjEnemy::Action()
 
 		this->SetStatus(false);
 		Hits::DeleteHitBox(this);
+
+		//敵消滅でシーンをゲームオーバーに移行する
+		Scene::SetScene(new CSceneClear());
 
 	}
 
