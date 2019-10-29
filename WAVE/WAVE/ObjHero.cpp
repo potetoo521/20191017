@@ -13,8 +13,8 @@ using namespace GameL;
 //イニシャライズ
 void CObjHero::Init()
 {
-	m_px = 0.0f;    //位置
-	m_py = 0.0f;
+	m_px = 5.0f;    //位置
+	m_py = 5.0f;
 
 	m_mou_px = 0.0f;//向き
 	m_mou_py = 0.0f;
@@ -187,13 +187,13 @@ void CObjHero::Action()
 
 	}
 	//HPが0になったら破棄
-	if (m_hp <= 0)
+	/*if (m_hp <= 0)
 	{
 
 		this->SetStatus(false);
 		Hits::DeleteHitBox(this);
 
-	}
+	}*/
 
 
 

@@ -19,7 +19,7 @@ CObjBullet::CObjBullet(float x, float y)
 	
 
 	//当たり判定用のHitBoxを作成
-Hits::SetHitBox(this, m_px, m_py, 64, 64, ELEMENT_WHITE,  OBJ_BULLET, 1);
+Hits::SetHitBox(this, m_bx, m_by, 16, 16, ELEMENT_WHITE,  OBJ_BULLET, 1);
 
 
 }
@@ -85,9 +85,9 @@ void CObjBullet::Action()
 
 	//HitBoxの位置の変更
 	CHitBox*hit = Hits::GetHitBox(this);
-	hit->SetPos(m_px, m_py);
+	hit->SetPos(m_bx, m_by);
 
-	//敵機オブジェクトと接触したら弾丸消去
+	//敵オブジェクトと接触したら弾丸消去
 	if (hit->CheckObjNameHit(OBJ_ENEMY) != nullptr)
 	{
 		this->SetStatus(false);//自身に消去命令を出す。
